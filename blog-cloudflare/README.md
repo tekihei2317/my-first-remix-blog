@@ -13,10 +13,23 @@ npm run dev
 
 Open up [http://127.0.0.1:8788](http://127.0.0.1:8788) and you should be ready to go!
 
-## Deployment
+## メモ
 
-Cloudflare Pages are currently only deployable through their Git provider integrations.
+```bash
+DB=my-first-remix-blog
 
-If you don't already have an account, then [create a Cloudflare account here](https://dash.cloudflare.com/sign-up/pages) and after verifying your email address with Cloudflare, go to your dashboard and follow the [Cloudflare Pages deployment guide](https://developers.cloudflare.com/pages/framework-guides/deploy-anything).
+# データベースの作成
+wrangler d1 database create $DB
 
-Configure the "Build command" should be set to `npm run build`, and the "Build output directory" should be set to `public`.
+# データベースの作成（ローカル）
+wrangler d1 execute $DB  --local --command='select 1'
+
+# マイグレーションの作成
+wrangler d1 migrations create $DB <migration_name>
+
+# マイグレーションの実行（ローカル）
+wrangler d1 migrations apply $DB --local
+
+# シード（ローカル）
+wrangler d1 execute $DB --local --file=./seed.sql
+```
