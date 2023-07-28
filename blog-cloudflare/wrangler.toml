@@ -1,0 +1,4 @@
+[[d1_databases]]
+binding = "DB"
+database_name = "my-first-remix-blog"
+database_id = "28ec3926-5874-4e37-9fb1-fcaa92902d9a"

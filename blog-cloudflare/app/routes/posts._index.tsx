@@ -1,9 +1,10 @@
 import { json } from "@remix-run/cloudflare";
+import type { LoaderArgs } from "@remix-run/cloudflare";
 import { Link, useLoaderData } from "@remix-run/react";
 import { getPosts } from "~/posts.server";
 
-export async function loader() {
-  return json({ posts: await getPosts() });
+export async function loader({ context }: LoaderArgs) {
+  return json({ posts: await getPosts(context.env.DB) });
 }
 
 export default function Posts() {

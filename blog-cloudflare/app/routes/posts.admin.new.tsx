@@ -6,7 +6,7 @@ import { createPost } from "~/posts.server";
 const inputClassName =
   "w-full rounded border border-gray-500 px-2 py-1 text-lg";
 
-export async function action({ request }: ActionArgs) {
+export async function action({ context, request }: ActionArgs) {
   const formData = await request.formData();
   const title = formData.get("title");
   const slug = formData.get("slug");
@@ -29,7 +29,7 @@ export async function action({ request }: ActionArgs) {
   // sleep
   await new Promise((res) => setTimeout(res, 1000));
 
-  await createPost({ title, slug, markdown });
+  await createPost(context.env.DB, { title, slug, markdown });
 
   return redirect("/posts/admin");
 }

@@ -4,53 +4,33 @@ type Post = {
   markdown: string;
 };
 
-const posts: Post[] = [
-  {
-    slug: "my-first-post",
-    title: "My First Post",
-    markdown: `
-# This is my first post
+export async function getPosts(db: D1Database): Promise<Post[]> {
+  const { results } = await db.prepare("select * from posts").all<Post>();
 
-Isn't it great?
-    `.trim(),
-  },
-  {
-    slug: "90s-mixtape",
-    title: "A Mixtape I Made Just For You",
-    markdown: `
-# 90s Mixtape
-
-- I wish (Skee-Lo)
-- This Is How We Do It (Montell Jordan)
-- Everlong (Foo Fighters)
-- Ms. Jackson (Outkast)
-- Interstate Love Song (Stone Temple Pilots)
-- Killing Me Softly With His Song (Fugees, Ms. Lauryn Hill)
-- Just a Friend (Biz Markie)
-- The Man Who Sold The World (Nirvana)
-- Semi-Charmed Life (Third Eye Blind)
-- ...Baby One More Time (Britney Spears)
-- Better Man (Pearl Jam)
-- It's All Coming Back to Me Now (Céline Dion)
-- This Kiss (Faith Hill)
-- Fly Away (Lenny Kravits)
-- Scar Tissue (Red Hot Chili Peppers)
-- Santa Monica (Everclear)
-- C'mon N' Ride it (Quad City DJ's)
-    `.trim(),
-  },
-];
-
-export async function getPosts(): Promise<Post[]> {
-  return posts;
+  return results ?? [];
 }
 
-export async function getPost(slug: string): Promise<Post | null> {
-  const post = posts.find((post) => post.slug === slug);
-  return post ?? null;
-}
+export async function getPost(
+  db: D1Database,
+  slug: string
+): Promise<Post | null> {
+  console.log({ slug });
 
-export async function createPost(post: Post): Promise<Post> {
-  posts.push(post);
+  const post = await db
+    .prepare("select * from posts where slug = ?")
+    .bind(slug)
+    .first<Post | null>();
+
   return post;
+}
+
+export async function createPost(db: D1Database, post: Post): Promise<Post> {
+  const createdPost = await db
+    .prepare(
+      "insert into posts (slug, title, markdown) values (?, ?, ?) returning *"
+    )
+    .bind(post.slug, post.title, post.markdown)
+    .first<Post>();
+
+  return createdPost;
 }

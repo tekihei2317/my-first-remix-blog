@@ -1,9 +1,9 @@
-import { json } from "@remix-run/cloudflare";
+import { LoaderArgs, json } from "@remix-run/cloudflare";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import { getPosts } from "~/posts.server";
 
-export const loader = async () => {
-  return json({ posts: await getPosts() });
+export const loader = async ({ context }: LoaderArgs) => {
+  return json({ posts: await getPosts(context.env.DB) });
 };
 
 export default function PostAdmin() {

@@ -5,9 +5,9 @@ import invariant from "tiny-invariant";
 import { getPost } from "~/posts.server";
 import { marked } from "marked";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ context, params }: LoaderArgs) {
   invariant(params.slug, "params.slug is required");
-  const post = await getPost(params.slug);
+  const post = await getPost(context.env.DB, params.slug);
   invariant(post, `Post not found: ${params.slug}`);
 
   const html = marked(post.markdown);
